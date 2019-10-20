@@ -35,7 +35,7 @@ class CuestionarioController extends Controller
     /* DE RUtA : Obtiene un Cuestionario con todas sus elementos-opciones de ID */
     public function getCuestionarioElementos(Request $req)
     {
-        $cuestionario = $this->cuestionarioElementos($req->id);
+        $cuestionario = $this->cuestionarioElementos($req->id_c);
         return response()->json([
             'data' => $cuestionario,
         ]);
@@ -61,6 +61,36 @@ class CuestionarioController extends Controller
         $cuestionario->elementos = $elementos;
         $cuestionario->id = $this->encryptId($cuestionario->id);
         return $cuestionario;
+    }
+
+    /*DE RUTA : Obtiene el cuestionario los elementos y las respuestas agrupadas*/
+    public function getCuestionarioResultados(Request $req)
+    {
+        $id_cuestionario = $this->decryptId($req->id_c);
+        $pruebareal = isset($req->pruebareal) ? $req->pruebareal : 'real' ;
+        $cuestionario = collect(\DB::select("SELECT * from cuestionarios WHERE id = {$id_cuestionario}"))->first();
+        if(!$cuestionario) {
+            return response()->json([ 'estado'=>'error', 'msg' => 'No existe el identificador' ]);
+        }
+
+        $elementos = collect(\DB::select("SELECT * FROM elementos WHERE id_cuestionario = {$id_cuestionario} ORDER BY orden "))
+                        ->map(function($el, $k ) use ($id_cuestionario, $pruebareal) {
+                            if($el->tipo =='pregunta'){
+                                $el->config = json_decode($el->config);
+                                $el->respuestas = \DB::select("SELECT r.respuesta, count(r.respuesta) as cantidad FROM contestados d,  respuestas r 
+                                                                WHERE d.id_cuestionario = {$id_cuestionario} AND r.id_contestado = d.id 
+                                                                AND  r.id_elemento = {$el->id} AND d.estado = '{$pruebareal}' GROUP BY respuesta ");
+                            }   
+                            return $el;
+                        });
+        $cuestionario->elementos = $elementos; 
+
+        $contestadosProm = collect(\DB::select("SELECT count(*) as n , sum(tiempo_seg) as suma FROM contestados WHERE id_cuestionario = {$id_cuestionario}  "))->first() ;
+        $cuestionario->tiempo_promedio = ($contestadosProm->n == 0) ? 0: $contestadosProm->suma / $contestadosProm->n ;
+        return response()->json([
+            'data' => $cuestionario,
+            'nprom' => $contestadosProm
+        ]) ;
     }
 
     /* DE RUTA: Guarda un cuestionario con sus elementos y sus opciones respectivas*/
@@ -129,7 +159,7 @@ class CuestionarioController extends Controller
         }
     }
 
-    /* DE CLASE inserta las lo Contestado y las respuestas del Formulario*/
+    /* DE CLASE inserta lo Contestado y las respuestas del Formulario*/
     public function saveRespuestas($contest)
     {
         $idCuestionario = $this->decryptId($contest->id_cuestionario);
@@ -138,19 +168,19 @@ class CuestionarioController extends Controller
         $contestado->tiempo_seg = $contest->tiempo_seg;
         $contestado->estado = $contest->pruebareal;
         $contestado->created_at = \Carbon\Carbon::now(-4);
-        // $contestado->id = \DB::table('contestados')->insertGetId(get_object_vars($contestado));
-        // $contestado->respuestas = [];
-        // foreach ($contest->respuestas as $resp) {
-        //     $respuesta = (object)[];
-        //     $resp = (object)($resp);
-        //     $respuesta->id_contestado = $contestado->id;
-        //     $respuesta->id_elemento = $resp->id_elemento;
-        //     $respuesta->id_opcion = isset($resp->id_opcion) ? $resp->id_opcion : null;
-        //     $respuesta->respuesta_opcion = isset($resp->respuesta_opcion) ? $resp->respuesta_opcion : null;
-        //     $respuesta->respuesta = $resp->respuesta;
-        //     \DB::table('respuestas')->insertGetId(get_object_vars($respuesta));
+        $contestado->id = \DB::table('contestados')->insertGetId(get_object_vars($contestado));
+        $contestado->respuestas = [];
+        foreach ($contest->respuestas as $resp) {
+            $respuesta = (object)[];
+            $resp = (object)($resp);
+            $respuesta->id_contestado = $contestado->id;
+            $respuesta->id_elemento = $resp->id_elemento;
+            $respuesta->id_opcion = isset($resp->id_opcion) ? $resp->id_opcion : null;
+            $respuesta->respuesta_opcion = isset($resp->respuesta_opcion) ? $resp->respuesta_opcion : null;
+            $respuesta->respuesta = $resp->respuesta;
+            \DB::table('respuestas')->insertGetId(get_object_vars($respuesta));
 
-        // }
+        }
         return $contestado;
     }
 

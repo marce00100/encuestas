@@ -1,5 +1,7 @@
 
-
+.quest{
+  color: rgb(0,0,0,0.85) !important;
+}
 .quest-input{	
   border-left: none !important;
   border-right: none !important;

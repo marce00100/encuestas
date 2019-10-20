@@ -55,6 +55,7 @@
 
 <div id="" class=" " >
     <div class="panel">
+        {{ csrf_field() }}
         <input type="hidden" id="id_c">
         <div class="panel-heading bg-dark" style="height: 200px">
             <div class="panel-title  " style="padding: 50px 0 60px 0; font-weight:normal">
@@ -79,9 +80,7 @@
         </div>
     </div>
 
-    <form id="logout-form" action="" method="POST" style="display: none;">
-        {{ csrf_field() }}
-    </form>
+
 </div>
 
 
@@ -116,14 +115,14 @@
     }
 
     var elm = {
-        pregunta_line: `<div class="__elemento row" __tipo="pregunta" __id_elemento="">                          
-                            <div class="__texto quest-h2"  style="height: 30px"></div>
+        pregunta_line: `<div class="__elemento row " __tipo="pregunta" __id_elemento="">                          
+                            <div class="__texto quest quest-h2"  style="height: 30px"></div>
                             <div class="__elem_respuesta pl20 col-md-12"  __tipo_respuesta="">
                             </div>  
                         </div>`,
         titulo_line: `  <div class="__elemento row mv15" __tipo="titulo" __id_elemento="">
-                            <div  class="quest-h1 __texto  mb15" style="height: 35px"></div>
-                            <div  class="quest-sm __descripcion" style="height: 30px"></div>                        
+                            <div  class="quest quest-h1 __texto  mb15" style="height: 35px"></div>
+                            <div  class="quest quest-sm __descripcion" style="height: 30px"></div>                        
                         </div>`,
         respuesta_corta_line: ` <div class="mt15 mb20">
                                     <input class="bg-white line form-control quest-input-line quest-h2 __open_sm" placeholder="Escribe tu respuesta" style="width:80%"  >
@@ -132,8 +131,8 @@
         respuesta_seleccion_line: ` <ul class="__opciones_respuesta mv10 pl15" style="list-style: none;">                                      
                                     </ul>`,       
         opcion_individual_line:`<li class="mt5 __opcion_individual" > 
-                                    <input id="" type="" name="" class="__opcion_individual" value="">
-                                    <label class="__opcion_individual quest-md" for="reemplaza_id"></label> 
+                                    <input id="" type="" name="" class="__opcion_individual" title="la muerda misma" value="mival" >
+                                    <label class="__opcion_individual quest quest-md" for="reemplaza_id"></label> 
                                 </li>`, 
         adicionaElemento: function(tipoElemento){
             var contenidoElementos = $("#contenido_elementos");
@@ -181,8 +180,9 @@
                         $(elemento).find('.__elem_respuesta').append(elm.respuesta_seleccion_line);                        
                         objElem.opciones.forEach(function(op){
                             var typeinput = cnf.tipo_respuesta == 'single' ? 'radio' : 'checkbox';
-                            var opcion = $(elm.opcion_individual_line);
-                            $(opcion).find('input').attr('id', op.id).attr('name', objElem.id).attr('type', typeinput).val(op.opcion); 
+                            var opcion = $(elm.opcion_individual_line );
+                            $(opcion).find('input').attr('id', op.id).attr('name', objElem.id).attr('type', typeinput).val(op.opcion);
+                            
                             $(opcion).find('label.__opcion_individual').attr('for',op.id).text(op.opcion);
                             $(elemento).find('.__opciones_respuesta').append(opcion);
                         })
@@ -257,7 +257,7 @@
                                 <h3>Gracias por llenar el formulario!!. Sus respuestas fueron enviadas satisfactoriamente.</h3>
                             </div>`;
             if(estadoVista == 'new'){
-                $("#contenido_elementos input, #contenido_elementos textarea").val('');
+                $("#contenido_elementos input:text, #contenido_elementos textarea").val('');
                 $("#contenido_elementos input:radio, #contenido_elementos input:checkbox").prop("checked",false);
                 $("#contenido_elementos, #contenido_enviar").show();
                 $("#contenido_despues_enviar").html('').css('display','none');

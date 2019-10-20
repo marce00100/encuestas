@@ -74,7 +74,6 @@
 					|
 					<span id="agregar_titulo" class="glyphicons glyphicons-text_underline text-center pt10 mh15" style="cursor: pointer; width: 30px; height: 30px;" title="Agregar titulo"></span>
 				</div>
-		
 
 				<div id="contenido_elementos" class="" style="height: 500px; max-height: 900px; overflow-y: scroll;">	
 				</div>
@@ -91,21 +90,34 @@
 {{-- Estadisticas de las RESPUESTAS --}}
 <div id="mdlEstRespuestas" class="white-popup-block popup-basic admin-form mfp-with-anim mfp-hide " >
 	<div class="panel">
-		<div class="panel-heading bg-dark" style="height: 200px">
-			<span class="pull-right">o</span>
-			<div class="panel-title  " style="padding: 50px 0 60px 0">
-				<input type="text" id="c_titulo" name="" class="quest-input quest-h1 " placeholder="..Título principal" style="background-color: transparent;color: white; width: 90%">
-			</div>			
-		</div>
-		<div class="panel-body of-a bg-light darker ptn" >
-			<div class="row bg-white" style="max-width: 700px; margin:0 auto;">
-				<div id="contenido_elementos" class="" style="height: 500px; max-height: 900px; overflow-y: scroll;">	
-				</div>
-			</div>
+        <div class="panel-heading bg-dark" style="height: 200px">
+            <div class="panel-title  " style="padding: 50px 0 60px 0; font-weight:normal">
+            	<input type="hidden" id="id_c" name="">
+                <div id="c_titulo" name="" class="quest-h1 col-md-10 col-md-offset-1" style="background-color: transparent;color: white; "></div>
+            </div> 
+            <small id="pruebareal" class="fs11 col-md-12" style="margin: 50px 0 0 30px;"></small>         
+        </div> 
+        <div class="panel-body of-a bg-light darker ptn" style="position: relative;" >
+            <div class="row bg-white" style="max-width: 700px; margin:0 auto; box-shadow: 1px 2px 5px;">    
+                <div id="contenido_elementos" class="" >   
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
 
-		</div>
-        <div class="panel-footer">
-            <button  class="btn btn-warning br6 __cancel ml10" ><i class="fa fa-times"></i><span> Cerrar</span></button>
+{{-- Ventana Modal COmun para URL, Config ETC --}}
+<div id="mdlST" class="white-popup-block popup-basic admin-form mfp-with-anim mfp-hide " style="max-width:400px" >
+	<div class="panel">
+        <div class="panel-heading " style="">
+            <div class="panel-title  " style="padding: 50px 0 60px 0; font-weight:normal">
+            	<input type="hidden" id="id_c" name="">
+                <div id="c_titulo" name="" class="" style="background-color: transparent;color: white; "></div>
+            </div> 
+                  
+        </div> 
+        <div id="contenidoST" class="panel-body of-a bg-light darker ptn" style="" >
+
         </div>
     </div>
 </div>
@@ -121,8 +133,9 @@
 <script type="text/javascript" src="/libs/Highcharts-6.0.4/code/modules/exporting.js"></script>
 
 {{-- <script type="text/javascript" src="/libs/moCdify/hightcharts/themes/dark-unica_.src.js"></script> --}}
-<script type="text/javascript" src="/libs/modify/hightcharts/themes/grid_.src.js"></script>
+<script type="text/javascript" src="/libs/modify/hightcharts/themes/grid2.src.js"></script>
 {{-- <script type="text/javascript" src="/libs/modify/hightcharts/themes/sand-signika_.src.js"></script> --}}
+{{-- <script type="text/javascript" src="/libs/Highcharts-6.0.4/code/js/themes/grid.js"></script> --}}
 
 
 {{-- <script type="text/javascript" src="/libs/modify/pivot___.js"></script>
@@ -186,9 +199,6 @@
             });
 
         },
-        tituloModal: function(titulo){
-        	$(".__modal_titulo").html(titulo);
-        }
     }
 
     /* Context de encuestas */
@@ -204,9 +214,15 @@
 		    			</div>`;
     		},
     		opcionesThumbnail:`<div class="__acciones_thumbnail pull-right pr10" style="position:absolute; top: 0; right: 5px">
-									<span accion="edit" 	class="btn btn-sm fa fa-pencil fa-lg text-white-darker ph5 "  title="Editar"></span>
-									<span accion="info" 	class="btn btn-sm fa fa-info fa-lg text-white-darker ph5"  title="Informacion"></span>
-									<span accion="preview" 	class="btn btn-sm glyphicons glyphicons-eye_open fa-lg text-white-darker ph5"  title="Vista previa"></span>
+									<span accion="edit" 	class="btn btn-sm fa fa-pencil fa-lg text-white-darker pl5 prn "  title="Editar"></span>									
+									<span accion="preview" 	class="btn btn-sm fa fa-eye fa-lg text-white-darker pl5 prn"  title="Vista previa del formulario"></span>
+									<span accion="results" 	class="btn btn-sm fa fa-bar-chart-o fa-lg text-white-darker pl5 prn"  title="Ver resultados estadisticos"></span>
+									<span accion="link" 	class="btn btn-sm fa fa-link fa-lg text-white-darker pl5 prn"  title="url de acceso al cuestionario para publicar"></span>
+								</div>`,
+			enlaceEncuesta:`<div class="__enlace_encuesta  pr10" style=" ">
+									<span 	class="btn btn-sm fa fa-link fa-2x text-white-darker pl5 prn " ></span>									
+									<span  id="enlaceEncuesta"	class="btn btn-sm fa fa-eye fa-lg text-white-darker pl5 prn"  title="">enn</span>
+									<button id="cerrarEnlaceEncuesta" class="btn btn-sm bg-warning __cancel">cerrar</button>
 								</div>`,
 
     	},
@@ -216,11 +232,11 @@
     			var listaMapeada = ctxQ.encuestasList.map(function(elem){
     									return elem; // por el momento no hace nada ,pero se puede filtrar u ordenar
     								});
-    			ctxQ.fillMapa(listaMapeada)
+    			ctxQ.fillThumbnails(listaMapeada)
 
     		})
     	},	
-    	fillMapa: function(lista){
+    	fillThumbnails: function(lista){
     		var htmlThumbnail = '';
     		lista.forEach(function(elem){
     			htmlThumbnail += ctxQ.elems.thumbnail(elem);
@@ -233,7 +249,7 @@
     		ctxG.showModal(ctxMod.idmodal);
     	},
     	editarEncuesta: function(id){
-    		$.get(`${ctxG.rutabase}/getcuestionarioelementos`, {id: id}, function(res){
+    		$.get(`${ctxG.rutabase}/getcuestionarioelementos`, {id_c: id}, function(res){
     			ctxMod.setData(res.data);
     			ctxG.showModal(ctxMod.idmodal);
     		})
@@ -241,12 +257,28 @@
     	mostrarVistaPrevia: function(idCuestionario){
     		window.open('/encuesta/llenar/prueba/'+idCuestionario, '_blank'); 
     	},
+    	estadisticaEncuesta: function(idCuestionario){
+    		$.get(`${ctxG.rutabase}/getcuestionarioresultados`, {id_c: idCuestionario, pruebareal:'prueba' }, function(res){
+    			ctxG.showModal(ctxEst.idModal);
+    			ctxEst.setData(res.data);
+    		})
+    	},
     	ejecutaAccionThumbnail: function(accion, idCuestionario){
     		if(accion=='edit'){
     			ctxQ.editarEncuesta(idCuestionario);
     		}
     		if(accion=='preview'){    			
     			ctxQ.mostrarVistaPrevia(idCuestionario);
+    		}
+    		if(accion=='results'){    			
+    			ctxQ.estadisticaEncuesta(idCuestionario);
+    		}
+    		if(accion=='link'){   
+    			$("#mdlST #contenidoST").html(ctxQ.elems.enlaceEncuesta);
+    			ctxG.showModal('#mdlST')
+    			// $(`[__id_c="${idCuestionario}" ]`).append(ctxQ.elems.enlaceEncuesta)
+    		 		// div.prepend(ctxQ.elems.enlaceEncuesta);   	
+    			// ctxQ.estadisticaEncuesta(idCuestionario);
     		}
     	}
     }
@@ -258,7 +290,7 @@
 								<span accion="quitar" class="fa fa-trash-o fa-lg text-muted ml10" style="cursor: pointer; " title="Quitar elemento"></span>
 							</div>`,
     	pregunta: `<div class="__elemento row" __tipo="pregunta" >    						
-						<textarea type="text" class="__texto quest-input quest-h2" placeholder="Escriba la pregunta.." style="height: 30px" rows="1"></textarea>
+						<textarea type="text" class="__texto quest quest-input quest-h2" placeholder="Escriba la pregunta.." style="height: 30px" rows="1"></textarea>
 						<div class="col-md-6">
 							<select class="__elem_tipo_respuesta form-control">
 								<option value="single">Selección simple</option>
@@ -270,7 +302,7 @@
 						</div>	
 					</div>`,
 		titulo: `<div class="__elemento row" __tipo="titulo">
-					<textarea type="text" class="quest-input quest-h1 __texto" placeholder="Escriba el título.." style="height: 35px" rows="1"></textarea>
+					<textarea type="text" class="quest quest-input quest-h1 __texto" placeholder="Escriba el título.." style="height: 35px" rows="1"></textarea>
 					<textarea type="text" class="quest-input quest-sm __descripcion" placeholder="descripcion" style="height: 30px" rows="1"></textarea>						
 				</div>`,
 
@@ -347,6 +379,31 @@
     		opcionesRespuesta.append(elm.opcion_individual);
     		opcionesRespuesta.find('.__opcion_individual').last().focus();
     	},
+    	est: {
+    		pregunta: `<div class="__elemento row quest" __tipo="pregunta" __id_elemento="">                          
+                            <div class="__texto quest-h2"  style="height: 30px"></div>
+                            <div  class="__elem_respuesta pl20 col-md-12"  __tipo_respuesta="">
+                            </div>  
+
+                            <div id="" class="__elem_chart" style=" max-width:400px; margin: 0 auto "></div>
+                        </div>`,
+	        titulo: `  <div class="__elemento quest row mv15" __tipo="titulo" __id_elemento="">
+                            <div  class="quest-h1 __texto  mb15" style="height: 35px"></div>
+                            <div  class="quest-sm __descripcion" style="height: 30px"></div>                        
+                        </div>`,
+
+	        adicionaElemento: function(tipoElemento){
+	            var contenidoElementos = $("#contenido_elementos");
+	            if(tipoElemento == 'pregunta'){
+	               contenidoElementos.append(elm.est.pregunta);
+	            }
+	            if(tipoElemento == 'titulo'){
+	                contenidoElementos.append(elm.est.titulo);
+	            }
+
+	        },    
+
+    	}
 
     }
 
@@ -430,8 +487,7 @@
     			ctxG.mostrarMensajeFloat(res);
     			var cuestionario = res.data
     			$(`${ctxMod.idmodal} #c_id`).val(cuestionario.id);
-    		});
-    		
+    		});    		
     	},
     	init: function(){
     		/* heigh automatica en textareas*/
@@ -497,6 +553,207 @@
         	});
     	}
 
+    }
+
+    var ctxEst = {
+    	idModal : '#mdlEstRespuestas',
+    	setData: function(objCuestionario){
+    		$("#id_c").val(objCuestionario.id);
+            $("#c_titulo").html(objCuestionario.titulo);
+
+
+            objCuestionario.elementos.forEach(function(objElem)
+            {
+                elm.est.adicionaElemento(objElem.tipo);
+
+                var elemento = $("#contenido_elementos .__elemento").last();
+                $(elemento).attr('__id_elemento', objElem.id);
+                $(elemento).find('.__texto').html(objElem.texto);
+                $(elemento).find('.__descripcion').html(objElem.descripcion);
+
+                if(objElem.tipo == 'pregunta'){                    
+                    var cnf = objElem.config;
+                    $(elemento).find('[__tipo_respuesta]').first().attr('__tipo_respuesta', cnf.tipo_respuesta);
+                    
+                    $(elemento).find(".__elem_chart").attr('id', objElem.id);
+                    datagraph = graph.transformaDataGraph(objElem.respuestas);
+                    var tipo_grafico = cnf.tipo_respuesta == 'single' ? 'pie' :  ( cnf.tipo_respuesta == 'multiple' ? 'column' : 'bar')
+                    graph.grafica(objElem.id, datagraph, tipo_grafico )
+                    
+      	
+                }
+            })
+    	},
+
+
+    }
+
+    var graph = {
+    	transformaDataGraph : function(datalist){
+    		categorias = [];
+    		series = [];
+    		datalist.forEach(function(elem){
+    			categorias.push(elem.respuesta);
+    			series.push({ name:elem.respuesta, y: parseInt(elem.cantidad) });
+
+    		});
+    		console.log({ categorias: categorias, series:series })
+    		return { categorias: categorias, series:series }
+    	},
+    	grafica : function( idElem, dataGraph, tipo){ 
+    		// console.log(datagraph) 
+    		var tool = '{series.name}: <b>{point.y:.1f} (' + '' +') </b> ';   
+    		var stacked =  'normal' ;
+    		var tipo = tipo || 'column';		
+   //  		json = {   
+   //  			chart : {
+   //  				type: tipo,
+   //  				options3d: {
+   //  					enabled: false,
+   //  					alpha: tipo=='pie' ? 45 : 23, 
+   //  					beta: 0, depth: 60
+   //  				},
+   //  				zoomType: 'xy',
+   //  			},
+   //  			// title : {
+   //  			// 	text: tituloChart   
+   //  			// },   
+   //  			// subtitle :{
+   //  			// 	text: subtituloChart
+   //  			// }, 
+   //  			xAxis :{
+   //  				categories: dataGraph.categorias,
+   //  				// categories: ['ie','op','n','wser','ppo','pupu','xuxu'] ,
+   //              },
+   //              yAxis : {
+   //              	title: {
+   //              		// text: unidadMedida
+   //              	}
+   //              },
+   //              tooltip:  {
+   //              	pointFormat: tool,
+   //              },
+
+   //              plotOptions : {
+   //              	series: {
+   //              		marker : { 
+   //              			symbol:'circle',
+   //                          // radius: 3,
+   //                      },
+   //                      stacking: stacked,
+   //                      dataLabels: {
+   //                      	enabled: true,
+   //                      	format: '{y:.1f}'
+   //                          // color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || '#ccc'
+   //                      }
+   //                  },
+   //                  column: {
+   //                  	stacking: stacked,
+   //                  	dataLabels: {
+   //                  		enabled: true,
+   //                  		color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || '#ccc'
+   //                  	}
+   //                  },
+   //                  area: {
+   //                  	stacking: 'normal',
+   //                  	lineColor: '#eee',
+   //                  	lineWidth: 1,
+   //                  },
+   //                  pie: {
+   //                  	innerSize: 100,
+   //                  	depth: 45,
+   //                  	allowPointSelect: true,
+   //                  	cursor: 'pointer',
+   //                      dataLabels: {
+   //                      	enabled: true,
+   //                      	format: '{point.category}'
+   //                      }
+   //                  },                    
+   //              },
+   //              series: [{
+			// 		        name: '_',
+			// 		        colorByPoint: true,
+			// 		        data: dataGraph.series,
+			// 			}]
+			// }
+
+			json2 = {
+
+				chart: {
+			        plotBackgroundColor: null,
+			        plotBorderWidth: null,
+			        plotShadow: false,
+			        type: tipo || 'column'
+			    },
+			    xAxis :{ 
+			    	categories: dataGraph.categorias,
+			    },
+			    yAxis : {
+                    title: {
+                        text: 'Cantidad'
+                    }
+                },
+			    title: {
+			        text: ' '
+			    },
+			    tooltip: {
+			        pointFormat: `<div class="bg-dark darker w200">{series.name}: <b>{point.percentage:.1f}%</b>
+			        				<br>Cantidad: {point.y} </div>`
+			    },
+                plotOptions : {
+                	series: {
+                		marker : { 
+                			symbol:'circle',
+                            // radius: 3,
+                        },
+                        stacking: stacked,
+                        dataLabels: {
+                        	enabled: true,
+                        	format: '{y:.1f}'
+                            // color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || '#ccc'
+                        }
+                    },
+                    column: {
+                    	stacking: stacked,
+                    	dataLabels: {
+                    		enabled: true,
+                    		color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || '#ccc'
+                    	}
+                    },
+                    area: {
+                    	stacking: 'normal',
+                    	lineColor: '#eee',
+                    	lineWidth: 1,
+                    },
+                    pie: {
+                    	innerSize:5,
+                    	depth: 45,
+                    	allowPointSelect: true,
+                    	cursor: 'pointer',
+                        // dataLabels: {
+                        // 	enabled: true,
+                        // 	format: '{point.category}'
+                        // },
+                        dataLabels: {
+			                enabled: true,
+			                format: '<b>{point.category}</b>: {point.percentage:.1f} %',
+			                style: {
+			                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+			                }
+			            },
+			            showInLegend: true
+                    },                    
+                },
+			    series: [{
+			        name: ' ',
+			        colorByPoint: true,
+			        data: dataGraph.series,
+			    }]
+			}
+
+			// Highcharts.chart(`#${idElem}`, json2)
+            $(`#${idElem}`).highcharts(json2);
+        } 
     }
 
 

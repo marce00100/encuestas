@@ -31,6 +31,7 @@ Route::group(['prefix' => 'admcuestionario', 'middleware' => 'auth'], function()
         Route::get('getcuestionarios_us', 'Cuestionarios\CuestionarioController@getCuestionariosUs');
         Route::post('savecuestionario', 'Cuestionarios\CuestionarioController@saveCuestionario');
         Route::get('getcuestionarioelementos', 'Cuestionarios\CuestionarioController@getCuestionarioElementos');        
+        Route::get('getcuestionarioresultados', 'Cuestionarios\CuestionarioController@getCuestionarioResultados');        
     });
 });
 
